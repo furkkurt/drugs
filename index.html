@@ -1,0 +1,168 @@
+<!doctype html>
+<html class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./static/output.css" rel="stylesheet" />
+    <style>
+      .tabcontent {
+        display: none;
+      }
+      .tabcontent table {
+        margin: auto;
+      }
+    </style>
+    <script>
+      function showTable(tableId) {
+        const tables = ["table1", "table2", "table3"];
+        tables.forEach((id) => {
+          const table = document.getElementById(id);
+          if (tableId === id) {
+            table.style.display = "block";
+          } else {
+            table.style.display = "none";
+          }
+        });
+      }
+      document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("defaultOpen").click();
+      });
+    </script>
+  </head>
+  <body class="bg-gradient-to-b from-white to-blue-100 min-h-screen">
+  <div class="transition fixed bottom-6 right-6 flex justify-center items-center w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 cursor-pointer"> <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16h6M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /> </svg> </div>
+    <custom-header></custom-header>
+    <div class="flex justify-center mt-32">
+      <div class="relative w-1/2">
+        <input
+          type="text"
+          class="border border-gray-300 p-4 pl-10 rounded-full shadow-lg w-full focus:outline-none"
+          placeholder="İlaç sorgusu giriniz"
+        />
+        <button
+          class="absolute right-0 top-0 mt-2 mr-4 bg-blue-500 text-white p-2 rounded-full w-16 hover:bg-blue-700"
+        >
+          Ara
+        </button>
+      </div>
+    </div>
+    <div class="flex justify-center mt-16">
+      <div class="w-3/4">
+        <div class="tab text-xl font-bold w-full grid grid-cols-3 mb-8">
+          <button
+            class="tablinks hover:scale-110 transition"
+            onclick="showTable('table1')"
+            id="defaultOpen"
+          >
+            Ruhsatlı İlaçlar
+          </button>
+          <button class="tablinks hover:scale-110 transition" onclick="showTable('table2')">
+            Radyofarmasötik
+          </button>
+          <button class="tablinks hover:scale-110 transition" onclick="showTable('table3')">
+            Alerjen Ürünler
+          </button>
+        </div>
+        <div id="table1" class="tabcontent">
+          <hr class="mb-8">
+          <table
+            class="table-auto w-full text-center border-collapse border border-gray-400 mt-4"
+          >
+            <thead>
+              <tr class="bg-gray-200">
+                <th class="border border-gray-300 p-2">SIRA NO</th>
+                <th class="border border-gray-300 p-2">BARKOD</th>
+                <th class="border border-gray-300 p-2">ÜRÜN ADI</th>
+                <th class="border border-gray-300 p-2">ETKEN MADDE</th>
+                <th class="border border-gray-300 p-2">ATC KODU</th>
+                <th class="border border-gray-300 p-2">RUHSAT SAHİBİ</th>
+                <th class="border border-gray-300 p-2">RUHSAT TARİHİ</th>
+                <th class="border border-gray-300 p-2">RUHSAT NUMARASI</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="border border-gray-300 p-2">1</td>
+                <td class="border border-gray-300 p-2">1234567890123</td>
+                <td class="border border-gray-300 p-2">Örnek Ürün</td>
+                <td class="border border-gray-300 p-2">Örnek Madde</td>
+                <td class="border border-gray-300 p-2">A01AB01</td>
+                <td class="border border-gray-300 p-2">Örnek Ruhsat</td>
+                <td class="border border-gray-300 p-2">2023-01-01</td>
+                <td class="border border-gray-300 p-2">123456</td>
+              </tr>
+              <tr>
+                <td class="border border-gray-300 p-2">2</td>
+                <td class="border border-gray-300 p-2">9876543210987</td>
+                <td class="border border-gray-300 p-2">Örnek Ürün</td>
+                <td class="border border-gray-300 p-2">Örnek Madde</td>
+                <td class="border border-gray-300 p-2">B02BC02</td>
+                <td class="border border-gray-300 p-2">Örnek Ruhsat</td>
+                <td class="border border-gray-300 p-2">2022-12-31</td>
+                <td class="border border-gray-300 p-2">654321</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="table2" class="tabcontent">
+          <table
+            class="table-auto w-full text-center border-collapse border border-gray-400 mt-4"
+          >
+            <thead>
+              <tr class="bg-gray-200">
+                <th class="border border-gray-300 p-2">BARKOD</th>
+                <th class="border border-gray-300 p-2">ÜRÜN ADI</th>
+                <th class="border border-gray-300 p-2">AMBALAJ BOYUTU</th>
+                <th class="border border-gray-300 p-2">GEÇİCİ İZİN SAHİBİ</th>
+                <th class="border border-gray-300 p-2">ETKEN MADDE</th>
+                <th class="border border-gray-300 p-2">İMAL/İTHAL</th>
+                <th class="border border-gray-300 p-2">GEÇİCİ İZİN TARİHİ</th>
+                <th class="border border-gray-300 p-2">GEÇİCİ İZİN NO</th>
+                <th class="border border-gray-300 p-2">REÇETE TÜRÜ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="border border-gray-300 p-2">4567890123456</td>
+                <td class="border border-gray-300 p-2">Örnek Ürün 2</td>
+                <td class="border border-gray-300 p-2">20mg</td>
+                <td class="border border-gray-300 p-2">
+                  Örnek Geçici İzin Sahibi
+                </td>
+                <td class="border border-gray-300 p-2">Örnek Madde</td>
+                <td class="border border-gray-300 p-2">İMAL</td>
+                <td class="border border-gray-300 p-2">2023-02-01</td>
+                <td class="border border-gray-300 p-2">789012</td>
+                <td class="border border-gray-300 p-2">Reçete Türü 1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="table3" class="tabcontent">
+          <table
+            class="table-auto w-full text-center border-collapse border border-gray-400 mt-4"
+          >
+            <thead>
+              <tr class="bg-gray-200">
+                <th class="border border-gray-300 p-2">ÜRÜN ADI</th>
+                <th class="border border-gray-300 p-2">FİRMA ADI</th>
+                <th class="border border-gray-300 p-2">ETKEN MADDE</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="border border-gray-300 p-2">Örnek Ürün 3</td>
+                <td class="border border-gray-300 p-2">Örnek Firma</td>
+                <td class="border border-gray-300 p-2">Örnek Madde</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="h-screen"></div>
+    <custom-footer></custom-footer>
+    <script src="./components/header.js"></script>
+    <script src="./components/footer.js"></script>
+  </body>
+</html>
