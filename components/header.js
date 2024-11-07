@@ -11,9 +11,9 @@ template.innerHTML = `
     <header class="flex items-center justify-between bg-transparent h-16">
       <!-- Logo -->
 	  <img src="assets/firat.png" class="pl-2 pt-2 h-16" />
-      <div class="font-custom1 text-blue-500 overflow-hidden mx-16 hidden justify-items-right lg:block [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-200px),transparent_100%)]">
+      <div class="font-custom1 text-blue-900 overflow-hidden mx-16 hidden justify-items-right lg:block [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-200px),transparent_100%)]">
         <p class="animate-infinite-scroll w-screen whitespace-nowrap pl-128 text-xl grid justify-items-end">
-          TÜRKİYE'NİN ÖNDE GELEN DOKTORLARININ FAVORİ SORGU SİSTEMİ !!!
+        	TÜRKİYE'NİN EN GÜNCEL İLAÇ VE PROSPEKTÜS SORGU SİTESİ
         </p>
       </div>
       <!-- Menu Items -->
