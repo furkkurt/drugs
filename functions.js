@@ -1,5 +1,10 @@
 import { fetchDrugs, fetchRadiopharmaceuticals, fetchAllergens, askOpenAI } from './api.js';
 
+// API endpoint'leri
+const drugsUrl = "https://nzbjdivwzf.execute-api.eu-north-1.amazonaws.com/prod/drugs";
+const radioUrl = "https://nzbjdivwzf.execute-api.eu-north-1.amazonaws.com/prod/radiopharmaceutical";
+const allergenUrl = "https://nzbjdivwzf.execute-api.eu-north-1.amazonaws.com/prod/allergens";
+
 let currentPage = 1;
 const itemsPerPage = 12;
 let cachedData = null;
