@@ -4,8 +4,9 @@ const radioUrl = "https://nzbjdivwzf.execute-api.eu-north-1.amazonaws.com/prod/r
 const allergenUrl = "https://nzbjdivwzf.execute-api.eu-north-1.amazonaws.com/prod/allergens";
 
 // OpenAI API yapılandırması
+
 const openaiConfig = {
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: OPENAI_API_KEY,
     model: "gpt-3.5-turbo"
 };
 
@@ -42,4 +43,12 @@ export const askOpenAI = async (prompt) => {
         console.error('OpenAI API hatası:', error);
         throw error;
     }
+};
+
+// Tüm API fonksiyonlarını dışa aktar
+export default {
+    fetchDrugs,
+    fetchRadiopharmaceuticals,
+    fetchAllergens,
+    askOpenAI
 }; 

@@ -43,15 +43,38 @@ async function initializeCache() {
         isLoading = true;
         document.body.appendChild(loadingIndicator);
         
-        console.log('Fetching data from:', `${drugsUrl}?drugsId=all`);
-        const response = await axios.get(`${drugsUrl}?drugsId=all`);
+        // Tüm verileri toplamak için array
+        let allData = [];
+        let lastEvaluatedKey = null;
         
-        if (!response.data) {
-            throw new Error('No data received from API');
-        }
+        do {
+            console.log('Fetching data batch with lastEvaluatedKey:', lastEvaluatedKey);
+            
+            // API çağrısı için URL oluştur
+            let url = `${drugsUrl}?drugsId=all`;
+            if (lastEvaluatedKey) {
+                url += `&lastEvaluatedKey=${encodeURIComponent(JSON.stringify(lastEvaluatedKey))}`;
+            }
+            
+            const response = await axios.get(url);
+            
+            if (!response.data) {
+                throw new Error('No data received from API');
+            }
+            
+            // Mevcut sayfadaki verileri ekle
+            if (response.data.items && Array.isArray(response.data.items)) {
+                allData = allData.concat(response.data.items);
+                console.log(`Added ${response.data.items.length} items. Total: ${allData.length}`);
+            }
+            
+            // Bir sonraki sayfa için lastEvaluatedKey'i güncelle
+            lastEvaluatedKey = response.data.lastEvaluatedKey;
+            
+        } while (lastEvaluatedKey); // lastEvaluatedKey null olana kadar devam et
         
-        console.log('Data received:', response.data);
-        cachedData = response.data;
+        console.log('Total items fetched:', allData.length);
+        cachedData = allData;
         
         // Hesaplamaları yap
         calculateStats();
@@ -611,8 +634,32 @@ function updateStatsDisplay() {
     animateCounter(statsElements.uniqueCompanies, statsData.uniqueCompanies);
 }
 
-// Radyofarmasötik verilerini çek
+// showTable fonksiyonunu güncelle
+window.showTable = function(tableId) {
+    console.log(`showTable çağrıldı: ${tableId}`);
+    const tables = ["table1", "table2", "table3"];
+    tables.forEach((id) => {
+        const table = document.getElementById(id);
+        if (tableId === id) {
+            console.log(`${id} görünür yapılıyor`);
+            table.style.display = "block";
+            if (id === 'table2') {
+                console.log('Radyofarmasötik veriler yükleniyor...');
+                getRadioData(1);
+            } else if (id === 'table3') {
+                console.log('Alerjen veriler yükleniyor...');
+                getAllergenData(1);
+            }
+        } else {
+            console.log(`${id} gizleniyor`);
+            table.style.display = "none";
+        }
+    });
+}
+
+// getRadioData fonksiyonunu güncelle
 async function getRadioData(page = 1) {
+    console.log('getRadioData çağrıldı, sayfa:', page);
     try {
         console.log('Radyofarmasötik veri çekme başladı');
         
@@ -658,7 +705,78 @@ async function getRadioData(page = 1) {
         if (dataList) {
             dataList.innerHTML = `
                 <tr>
-                    <td colspan="5" class="px-6 py-4 text-center text-red-500">
+                    <td colspan="4" class="px-6 py-4 text-center text-red-500">
+                        Veriler yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.
+                    </td>
+                </tr>
+            `;
+        }
+    }
+}
+
+// Alerjen verilerini çek
+async function getAllergenData(page = 1) {
+    try {
+        console.log('Alerjen veri çekme başladı');
+        
+        if (!cachedAllergens) {
+            console.log('Cache boş, API\'den veri çekiliyor...');
+            let allData = [];
+            let lastEvaluatedKey = null;
+            
+            do {
+                const url = `${allergenUrl}?allergensId=all${lastEvaluatedKey ? `&lastEvaluatedKey=${encodeURIComponent(JSON.stringify(lastEvaluatedKey))}` : ''}`;
+                console.log('API çağrısı yapılıyor:', url);
+                
+                const response = await axios.get(url);
+                console.log('API yanıtı:', response);
+                
+                if (response.data.items && Array.isArray(response.data.items)) {
+                    allData = allData.concat(response.data.items);
+                }
+                
+                lastEvaluatedKey = response.data.lastEvaluatedKey;
+            } while (lastEvaluatedKey);
+            
+            cachedAllergens = allData;
+        }
+
+        const dataList = document.querySelector('#table3 tbody');
+        if (!dataList) {
+            console.error('table3 tbody elementi bulunamadı');
+            return;
+        }
+
+        dataList.innerHTML = '';
+
+        // Sayfalama için veriyi böl
+        const startIndex = (page - 1) * allergenItemsPerPage;
+        const endIndex = startIndex + allergenItemsPerPage;
+        const pageData = cachedAllergens.slice(startIndex, endIndex);
+
+        console.log('Veriler tabloya ekleniyor...');
+        pageData.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-gray-50';
+            row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${startIndex + index + 1}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.Etkin_Madde || 'N/A'}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.Firma_Adi || 'N/A'}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.Urun_Adi || 'N/A'}</td>
+            `;
+            dataList.appendChild(row);
+        });
+
+        // Pagination'ı güncelle
+        setupAllergenPagination(cachedAllergens.length, page);
+
+    } catch (error) {
+        console.error('Alerjen veri çekme hatası:', error);
+        const dataList = document.querySelector('#table3 tbody');
+        if (dataList) {
+            dataList.innerHTML = `
+                <tr>
+                    <td colspan="4" class="px-6 py-4 text-center text-red-500">
                         Veriler yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.
                     </td>
                 </tr>
@@ -719,62 +837,6 @@ function setupRadioPagination(totalItems, currentPage) {
     pagination.appendChild(lastPageButton);
 }
 
-// Alerjen verilerini çek
-async function getAllergenData(page = 1) {
-    try {
-        console.log('Alerjen veri çekme başladı');
-        
-        if (!cachedAllergens) {
-            console.log('Cache boş, API\'den veri çekiliyor...');
-            const response = await axios.get(`${allergenUrl}?allergensId=all`);
-            console.log('API yanıtı:', response);
-            cachedAllergens = response.data;
-        }
-
-        const dataList = document.querySelector('#table3 tbody');
-        if (!dataList) {
-            console.error('table3 tbody elementi bulunamadı');
-            return;
-        }
-
-        dataList.innerHTML = '';
-
-        // Sayfalama için veriyi böl
-        const startIndex = (page - 1) * allergenItemsPerPage;
-        const endIndex = startIndex + allergenItemsPerPage;
-        const pageData = cachedAllergens.slice(startIndex, endIndex);
-
-        console.log('Veriler tabloya ekleniyor...');
-        pageData.forEach((item, index) => {
-            const row = document.createElement('tr');
-            row.className = 'hover:bg-gray-50';
-            row.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${startIndex + index + 1}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.Etkin_Madde || 'N/A'}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.Firma_Adi || 'N/A'}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.Urun_Adi || 'N/A'}</td>
-            `;
-            dataList.appendChild(row);
-        });
-
-        // Pagination'ı güncelle
-        setupAllergenPagination(cachedAllergens.length, page);
-
-    } catch (error) {
-        console.error('Alerjen veri çekme hatası:', error);
-        const dataList = document.querySelector('#table3 tbody');
-        if (dataList) {
-            dataList.innerHTML = `
-                <tr>
-                    <td colspan="12" class="px-6 py-4 text-center text-red-500">
-                        Veriler yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.
-                    </td>
-                </tr>
-            `;
-        }
-    }
-}
-
 // Alerjen pagination setup fonksiyonu
 function setupAllergenPagination(totalItems, currentPage) {
     const pagination = document.getElementById('allergen-pagination');
@@ -825,24 +887,6 @@ function setupAllergenPagination(totalItems, currentPage) {
     lastPageButton.className = `${buttonClass} ${currentPage >= totalPages ? disabledClass : inactiveClass}`;
     lastPageButton.addEventListener('click', () => getAllergenData(totalPages));
     pagination.appendChild(lastPageButton);
-}
-
-// showTable fonksiyonunu güncelle
-function showTable(tableId) {
-    const tables = ["table1", "table2", "table3"];
-    tables.forEach((id) => {
-        const table = document.getElementById(id);
-        if (tableId === id) {
-            table.style.display = "block";
-            if (id === 'table2') {
-                getRadioData(1); // Sayfa 1'den başla
-            } else if (id === 'table3') {
-                getAllergenData();
-            }
-        } else {
-            table.style.display = "none";
-        }
-    });
 }
 
 // Hata gösterme fonksiyonu
