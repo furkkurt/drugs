@@ -1,5 +1,4 @@
-const OPENAI_API_KEY = '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';
-
+// API endpoint'leri
 const drugsUrl = "https://nzbjdivwzf.execute-api.eu-north-1.amazonaws.com/prod/drugs";
 const radioUrl = "https://nzbjdivwzf.execute-api.eu-north-1.amazonaws.com/prod/radiopharmaceutical";
 const allergenUrl = "https://nzbjdivwzf.execute-api.eu-north-1.amazonaws.com/prod/allergens";
